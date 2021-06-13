@@ -40,6 +40,7 @@ let i = 10;
 let timer = function () {
   if (i == 0) {
     clearInterval(timerID);
+    document.getElementById("check").onclick();
   }
   console.log(i + "秒経過");
   document.getElementById("timeCount").innerText = i;
@@ -53,11 +54,9 @@ document.getElementById("start").onclick = function game() {
   bgm.play();
   bgm.volume = 0.5;
   
-  // タイマー実行
-  // if (i !== 10) {
-  //   i == 0;
-  //   document.getElementById("timeCount").innerText = i;
-  // }
+  // タイマー開始
+  document.getElementById('timer').style.visibility = "visible";
+  i = 10;
   timer();
   timerID = setInterval(timer, 1000);
 
@@ -158,7 +157,9 @@ document.getElementById("start").onclick = function game() {
 
 // あってるかな？ボタンクリックで正誤判定
 document.getElementById("check").onclick = function kakunin() {
+  // タイマーストップ
   clearInterval(timerID);
+  document.getElementById('timer').style.visibility = "hidden";
   i = 10;
 
   // 問題数のカウントアップ
