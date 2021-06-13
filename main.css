@@ -1,5 +1,5 @@
 .section {
-  height: 60vh;
+  /* height: 60vh; */
   display: flex;
   justify-content: center;
   /* align-items: center; */
@@ -134,14 +134,14 @@
   padding: 0;
 }
 
-.kaisu {
+.times {
   font-size: 36px;
   text-align: center;
   margin: 0;
   padding: 0;
 }
 
-.shousan {
+.praise {
   font-size: 48px;
   color: red;
   text-align: center;

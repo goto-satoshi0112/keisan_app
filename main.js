@@ -1,50 +1,71 @@
 "use strict";
 
 let keisan;
+let ketasu = 9;
+let ope = "+";
+let test1;
+let test2;
 let first = document.getElementById("q1");
 let second = document.getElementById("q2");
-let my_audio = new Audio("パズルゲーム.mp3");
-let ansVoice = new Audio("a_voice4.mp3");
-let missVoice = new Audio("m_voice4.mp3");
-let fiveVoice = new Audio("f_voice4.mp3");
+let gazou = document.getElementById("image");
+let msg = document.getElementById("message");
+let kaisu = document.getElementById("times");
+let shousan = document.getElementById("praise");
 
-let end;
-let after;
-let counter;
-let nowTIme;
-let timer;
-let clear = function () {
-  clearInterval(timer);
-};
+const bgm = new Audio("パズルゲーム.mp3");
+const ansVoice = new Audio("a_voice4.mp3");
+const missVoice = new Audio("m_voice4.mp3");
+const fiveVoice = new Audio("f_voice4.mp3");
+
+// 正解数カウンターの関数定義
+let correct = 0;
+function seikaiUp() {
+  correct += 1;
+}
+
+// 連続正解数カウンターの関数定義
+let renzoku = 0;
+function renzokuUp() {
+  renzoku += 1;
+}
+
+// 問題数カウンターの関数定義
+let count = 0;
+function countUp() {
+  count += 1;
+}
+
+// タイマー
 let i = 10;
-timer = function () {
-  if (i < 0) {
-    clear();
-  } else {
-    console.log(i + "秒経過");
-    document.getElementById("timeCount").innerText = i;
-    i--;
-    }
-  };
+let timer = function () {
+  if (i == 0) {
+    clearInterval(timerID);
+  }
+  console.log(i + "秒経過");
+  document.getElementById("timeCount").innerText = i;
+  i--;
+};
+let timerID;
 
-// 「はじめよう」ボタンクリックでイベント実行
+// 「スタート」ボタンクリックでイベント実行
 document.getElementById("start").onclick = function game() {
-  let ketasu = 9;
-  let ope = "+";
-  let test1;
-  let test2;
-
-  my_audio.play();
-  my_audio.volume = 0.5;
-
+  // 音楽再生
+  bgm.play();
+  bgm.volume = 0.5;
+  
+  // タイマー実行
+  // if (i !== 10) {
+  //   i == 0;
+  //   document.getElementById("timeCount").innerText = i;
+  // }
   timer();
-  setInterval(timer, 1000);
+  timerID = setInterval(timer, 1000);
 
   // 正誤判定の画像とテキストをリセット
-  document.getElementById("image").setAttribute("src", "");
-  document.getElementById("message").innerText = "";
-  document.getElementById("kaisu").innerText = "";
-  document.getElementById("shousan").innerText = "";
+  gazou.setAttribute("src", "");
+  msg.innerText = "";
+  kaisu.innerText = "";
+  shousan.innerText = "";
 
   // selectタグのoption要素で指定された項目を取得
   let level = document.getElementById("select").value;
@@ -134,27 +155,11 @@ document.getElementById("start").onclick = function game() {
   }
 };
 
-// 正解数カウンターの関数定義
-let seitou = 0;
-function seikaiUp() {
-  seitou += 1;
-}
-
-// 連続正解数カウンターの関数定義
-let renzoku = 0;
-function renzokuUp() {
-  renzoku += 1;
-}
-
-// 問題数カウンターの関数定義
-let count = 0;
-function countUp() {
-  count += 1;
-}
 
 // あってるかな？ボタンクリックで正誤判定
 document.getElementById("check").onclick = function kakunin() {
-  clearInterval(timer);
+  clearInterval(timerID);
+  i = 10;
 
   // 問題数のカウントアップ
   countUp();
@@ -162,53 +167,54 @@ document.getElementById("check").onclick = function kakunin() {
   let kotae = document.getElementById("answer").value;
   // kotaeとkeisan結果の正誤判定し条件分岐させ、画像とメッセージ表示を切り替え
   if (kotae == keisan) {
-    document.getElementById("image").setAttribute("src", "2562575.jpg");
-    document.getElementById("message").innerText = "せいかい！！";
+    gazou.setAttribute("src", "2562575.jpg");
+    msg.innerText = "せいかい！！";
     seikaiUp();
     renzokuUp();
-    my_audio.volume = 0.2;
+    bgm.volume = 0.2;
     ansVoice.play();
   } else {
-    document.getElementById("image").setAttribute("src", "2562567.jpg");
-    document.getElementById("message").innerText = `ざんねん...せいかいは
+    gazou.setAttribute("src", "2562567.jpg");
+    msg.innerText = `ざんねん...せいかいは
     『 ${keisan} 』だよ`;
     renzoku = 0;
-    my_audio.volume = 0.2;
+    bgm.volume = 0.2;
     missVoice.play();
   }
   // answerをブランクに
   document.getElementById("answer").value = "";
   // 挑戦中の問題数と正解数を表示
-  document.getElementById(
-    "kaisu"
-  ).innerText = `${count} 問中 ${seitou} 問正解！`;
+  kaisu.innerText = `${count} 問中 ${correct} 問正解！`;
   // 問題数・連続正解数の一定数以上でメッセージ
   if (count >= 10 && renzoku >= 10) {
-    document.getElementById("shousan").innerText = "もはや神...!";
-    my_audio.volume = 0.2;
+    praise.innerText = "もはや神...!";
+    bgm.volume = 0.2;
     ansVoice.volume = 0;
     fiveVoice.play();
   } else if (count >= 5 && renzoku >= 5) {
-    document.getElementById("shousan").innerText = "すごい---!";
+    praise.innerText = "すごい---!";
   } else {
-    document.getElementById("shousan").innerText = "";
+    praise.innerText = "";
   }
 };
 
 document.getElementById("reset").onclick = function rst() {
   // 正誤判定の画像とテキストをリセット
-  document.getElementById("image").setAttribute("src", "");
-  document.getElementById("message").innerText = "";
-  seitou = 0;
+  gazou.setAttribute("src", "");
+  msg.innerText = "";
+  correct = 0;
   count = 0;
   renzoku = 0;
-  document.getElementById("kaisu").innerText = "";
-  document.getElementById("shousan").innerText = "";
+  kaisu.innerText = "";
+  praise.innerText = "";
   first.innerText = "";
   second.innerText = "";
-  my_audio.pause();
-  my_audio.currentTime = 0;
+  bgm.pause();
+  bgm.currentTime = 0;
   ansVoice.pause();
   missVoice.pause();
   fiveVoice.pause();
+  clearInterval(timer);
+  i = 10;
+  document.getElementById("timeCount").innerText = 10;
 };
